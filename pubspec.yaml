@@ -1,14 +1,35 @@
-name: salalati_app
-description: A new Flutter project for family trees.
+name: Build APK
 
-version: 1.0.0+1
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
 
-environment:
-  sdk: '>=3.0.0 <4.0.0'
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-dependencies:
-  flutter:
-    sdk: flutter
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-flutter:
-  uses-material-design: true
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+
+      - name: Generate missing platform folders
+        run: flutter create --platforms=android --project-name salalati_app .
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
