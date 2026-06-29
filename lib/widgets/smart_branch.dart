@@ -8,52 +8,54 @@ class SmartBranch extends StatefulWidget {
 }
 
 class _SmartBranchState extends State<SmartBranch> {
-  Offset position = const Offset(100, 100);
-  double length = 150; // الطول الافتراضي
+  List<String> names = []; // قائمة الأسماء
+
+  // دالة لإضافة اسم جديد
+  void _addNewName(String name) {
+    setState(() {
+      names.add(name);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      left: position.dx,
-      top: position.dy,
-      child: Stack(
-        alignment: Alignment.centerRight,
+    return Container(
+      width: 100, // عرض الجذع
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.brown[800],
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // جسم الغصن
-          GestureDetector(
-            onPanUpdate: (details) {
-              setState(() {
-                position += details.delta;
-              });
-            },
-            child: Container(
-              width: length,
-              height: 20,
-              decoration: BoxDecoration(
-                color: Colors.brown,
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
-          // مقبض التحكم في طول الغصن
-          GestureDetector(
-            onPanUpdate: (details) {
-              setState(() {
-                length += details.delta.dx; // تغيير الطول
-                if (length < 50) length = 50; // أقل طول ممكن
-              });
-            },
-            child: Container(
-              width: 25,
-              height: 25,
-              decoration: const BoxDecoration(
-                color: Colors.blue,
-                shape: BoxShape.circle,
-              ),
-            ),
+          // عرض الأسماء المضافة بشكل عمودي
+          ...names.map((name) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Text(name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          )),
+          // زر الإضافة في قائمة التعديل
+          IconButton(
+            icon: const Icon(Icons.add_circle, color: Colors.amber),
+            onPressed: () => _showAddNameDialog(context),
           ),
         ],
       ),
     );
+  }
+
+  // نافذة إدخال الاسم
+  void _showAddNameDialog(BuildContext context) {
+    TextEditingController controller = TextEditingController();
+    showDialog(context: context, builder: (context) => AlertDialog(
+      title: const Text("أضف اسماً للجذع"),
+      content: TextField(controller: controller),
+      actions: [
+        TextButton(onPressed: () {
+          _addNewName(controller.text);
+          Navigator.pop(context);
+        }, child: const Text("إضافة"))
+      ],
+    ));
   }
 }
