@@ -9,23 +9,25 @@ class FamilyTreeCanvas extends StatefulWidget {
 }
 
 class _FamilyTreeCanvasState extends State<FamilyTreeCanvas> {
-  List<String> names = [];
+  final List<String> _names = [];
 
   void _addName() {
-    TextEditingController c = TextEditingController();
+    final TextEditingController c = TextEditingController();
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text("أضف اسماً للشجرة"),
-        content: TextField(controller: c, decoration: const InputDecoration(hintText: "اكتب الاسم هنا")),
+        title: const Text("إضافة اسم للشجرة"),
+        content: TextField(controller: c),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("إلغاء")),
           ElevatedButton(
             onPressed: () {
-              setState(() => names.add(c.text));
+              if (c.text.isNotEmpty) {
+                setState(() => _names.add(c.text));
+              }
               Navigator.pop(ctx);
             },
-            child: const Text("إضافة"),
+            child: const Text("حفظ"),
           ),
         ],
       ),
@@ -35,14 +37,12 @@ class _FamilyTreeCanvasState extends State<FamilyTreeCanvas> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFDF5E6),
-      appBar: AppBar(title: const Text("سلالتي التراثية"), backgroundColor: Colors.brown[900]),
+      appBar: AppBar(title: const Text("سلالتي التراثية")),
       body: CustomPaint(
-        painter: HeritageTreePainter(names: names),
+        painter: HeritagePainter(_names),
         size: Size.infinite,
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.brown[900],
         onPressed: _addName,
         child: const Icon(Icons.add),
       ),
@@ -50,27 +50,22 @@ class _FamilyTreeCanvasState extends State<FamilyTreeCanvas> {
   }
 }
 
-class HeritageTreePainter extends CustomPainter {
+class HeritagePainter extends CustomPainter {
   final List<String> names;
-  HeritageTreePainter({required this.names});
+  HeritagePainter(this.names);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = const Color(0xFF6D4C41)..style = PaintingStyle.fill;
-    
+    final paint = Paint()..color = Colors.brown..style = PaintingStyle.fill;
     for (int i = 0; i < names.length; i++) {
-      double y = 100.0 + (i * 80.0);
-      canvas.drawOval(Rect.fromCenter(center: Offset(size.width / 2, y), width: 160, height: 60), paint);
+      final y = 80.0 + (i * 90.0);
+      canvas.drawOval(Rect.fromCenter(center: Offset(size.width / 2, y), width: 150, height: 50), paint);
       
-      final textPainter = TextPainter(
-        text: TextSpan(
-          text: names[i],
-          style: const TextStyle(color: Colors.amberAccent, fontSize: 18, fontWeight: FontWeight.bold),
-        ),
+      final tp = TextPainter(
+        text: TextSpan(text: names[i], style: const TextStyle(color: Colors.white, fontSize: 16)),
         textDirection: TextDirection.rtl,
       )..layout();
-      
-      textPainter.paint(canvas, Offset(size.width / 2 - textPainter.width / 2, y - 12));
+      tp.paint(canvas, Offset(size.width / 2 - tp.width / 2, y - 10));
     }
   }
 
