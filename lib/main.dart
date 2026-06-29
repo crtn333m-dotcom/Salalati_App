@@ -35,7 +35,7 @@ class _FamilyTreeCanvasState extends State<FamilyTreeCanvas> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFDF5E6), // لون الورق القديم
+      backgroundColor: const Color(0xFFFDF5E6),
       appBar: AppBar(title: const Text("سلالتي التراثية"), backgroundColor: Colors.brown[900]),
       body: CustomPaint(
         painter: HeritageTreePainter(names: names),
@@ -50,7 +50,6 @@ class _FamilyTreeCanvasState extends State<FamilyTreeCanvas> {
   }
 }
 
-// محرك الرسم الاحترافي (يرسم أشكالاً تراثية بدلاً من المربعات)
 class HeritageTreePainter extends CustomPainter {
   final List<String> names;
   HeritageTreePainter({required this.names});
@@ -61,11 +60,8 @@ class HeritageTreePainter extends CustomPainter {
     
     for (int i = 0; i < names.length; i++) {
       double y = 100.0 + (i * 80.0);
-      
-      // رسم شكل بيضاوي تراثي (أشبه بأوراق الشجر)
       canvas.drawOval(Rect.fromCenter(center: Offset(size.width / 2, y), width: 160, height: 60), paint);
       
-      // رسم النص داخل الشكل
       final textPainter = TextPainter(
         text: TextSpan(
           text: names[i],
